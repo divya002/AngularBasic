@@ -1,114 +1,162 @@
-<form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
-<label>
-    First Name:
-    <input type="text" formControlName="firstName">
-</label>
-<label>
-    Last Name:
-    <input type="text" formControlName="lastName">
-</label>
-<div formGroupName="address">
-    <h3>Address</h3>
-  
-    <label>
-      Street:
-      <input type="text" formControlName="street">
-    </label>
-  
-    <label>
-      City:
-      <input type="text" formControlName="city">
-    </label>
-    
-    <label>
-      State:
-      <input type="text" formControlName="state">
-    </label>
-  
-    <label>
-      Zip Code:
-      <input type="text" formControlName="zip">
-    </label>
-  </div>
-<button type="submit" [disabled]="!profileForm.valid">Submit</button>
-</form>
-<p>
-    <button (click)="updateProfile()">Update Profile</button>
-  </p>
-
-
-  <h1>Form Builder</h1>
-  <form [formGroup]="profileForm2" (ngSubmit)="onSubmit()">
-    <label>
-        First Name:
-        <input type="text" required formControlName="firstName">
-    </label>
-    <div *ngIf="profileForm2.get('firstName').invalid && (profileForm2.get('firstName').dirty || profileForm2.get('firstName').touched)">
-        <div *ngIf="profileForm2.get('firstName').errors.required">
-            Name is required.
-          </div>
-          <div *ngIf="profileForm2.get('firstName').errors.minlength">
-            Miniumum error
-          </div>
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12">
+      <h1>Citizen Registration</h1>
     </div>
-   
-    <label>
-        Last Name:
-        <input type="text" formControlName="lastName">
-    </label>
-    <label>
-      Physicallt Active:
-      <input type="checkbox" formControlName="PhysicallyActive" (change)="CheckboxChange();">
-  </label>
-    <div formGroupName="address">
-        <h3>Address</h3>
-      
-        <label>
-          Street:
-          <input type="text" formControlName="street">
-        </label>
-      
-        <label>
-          City:
-          <input type="text" formControlName="city">
-        </label>
-        
-        <label>
-          State:
-          <input type="text" formControlName="state">
-        </label>
-      
-        <label>
-          Zip Code:
-          <input type="text" formControlName="zip">
-        </label>
-      </div>
-      <div formArrayName="aliases">
-        <h3>Aliases</h3> <button (click)="addAlias()">Add Alias</button>
-      
-        <div *ngFor="let address of aliases.controls; let i=index;">
-          <!-- The repeated alias template -->
-         
-            <label>
-                Alias:
-                <ng-container [formGroupName]="i">
-                <input type="text" formControlName="name">
-                <input type="text" formControlName="key">
-            </ng-container>
+    <div class="col-sm-12 ">
+      <fieldset>
+        <legend>Personalia:</legend>
+        <form [formGroup]="profileForm2" (ngSubmit)="onSubmit()">
+          <div class="form-row">
+            <div class="form-group col-sm-6 ">
+              <label>
+                First Name:
               </label>
-        
-         
+              <input class="form-control"
+                [ngClass]="{'border border-danger':(profileForm2.get('firstName').invalid && (profileForm2.get('firstName').touched || profileForm2.get('firstName').dirty))}"
+                type="text" required formControlName="firstName" />
+              <ng-container *ngIf="
+                profileForm2.get('firstName').invalid &&
+                (profileForm2.get('firstName').dirty ||
+                  profileForm2.get('firstName').touched)">
+                <small class="form-text text-warning" *ngIf="profileForm2.get('firstName').errors.required">
+                  First Name is required.
+                </small>
+                <small class="form-text text-warning" *ngIf="profileForm2.get('firstName').errors.minlength">
+                  Miniumum error
+                </small>
+              </ng-container>
+            </div>
+            <div class="form-group col-sm-6">
+              <label>
+                Last Name:
+              </label>
+              <input class="form-control" type="text" required formControlName="lastName"
+                [ngClass]="{'border border-danger':(profileForm2.get('lastName').invalid && (profileForm2.get('lastName').touched || profileForm2.get('lastName').dirty))}" />
+
+              <ng-container *ngIf="
+                profileForm2.get('lastName').invalid &&
+                (profileForm2.get('lastName').dirty ||
+                  profileForm2.get('lastName').touched)
+              ">
+                <small class="form-text text-warning" *ngIf="profileForm2.get('lastName').errors.required">
+                  Last Name is required.
+                </small>
+                <small class="form-text text-warning" *ngIf="profileForm2.get('lastName').errors.minlength">
+                  Miniumum error
+                </small>
+              </ng-container>
+            </div>
+          </div>
+          <div class="form-row">
+            <h3 class="col-sm-12">Address</h3>
+            <ng-container formGroupName="address">
+              <div class="form-group col-sm-6">
+                <label>
+                  Street:
+                </label>
+                <input class="form-control" type="text" required formControlName="street" />
+              </div>
+
+              <div class="form-group col-sm-6">
+                <label>
+                  City:
+                </label>
+                <input class="form-control" type="text" required formControlName="city" />
+              </div>
+              <div class="form-group col-sm-6">
+                <ng-template #rt let-r="result" let-t="term">
+                  <img [src]="'https://upload.wikimedia.org/wikipedia/commons/thumb/' + r['flag']" class="mr-1"
+                    style="width: 16px">
+                  <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
+                </ng-template>
+
+                <label for="typeahead-template">Search for a state:</label>
+                <input id="typeahead-template" type="text" class="form-control" required formControlName="state"
+                  [ngbTypeahead]="search" [resultTemplate]="rt" [inputFormatter]="formatter" />
+              </div>
+              <div class="form-group col-sm-6">
+                <label>
+                  ZipCode:
+                </label>
+                <input class="form-control" type="text" required formControlName="zip" />
+              </div>
+            </ng-container>
+            <div class="form-group col-sm-6">
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" formControlName="PhysicallyActive"
+                  (change)="CheckboxChange()" />
+                <label class="form-check-label">
+                  Physically Active
+                </label>
+              </div>
+            </div>
+            <ng-container formArrayName="aliases">
+              <div class="col-sm-12">
+                <button type="button" class="btn btn-secondary btn-md" (click)="addAlias()">
+                  Add Reference
+                </button>
+              </div>
+              <ng-container *ngFor="let address of aliases.controls; let i = index">
+                <ng-container [formGroupName]="i">
+                  <div class="form-group col-sm-6">
+                    <label>
+                      Name:
+                    </label>
+                    <input type="text" class="form-control" formControlName="name" />
+                  </div>
+                  <div class="form-group col-sm-6">
+                    <label>
+                      Unique Identy:
+                    </label>
+                    <input type="text" class="form-control" formControlName="key" />
+                  </div>
+                </ng-container>
+              </ng-container>
+            </ng-container>
+            <div class="col-sm-12 d-flex justify-content-center">
+              <div class="btn-group col-sm-6">
+                <button type="submit" class="btn btn-primary btn-md" [disabled]="!profileForm2.valid">
+                  Submit
+                </button>
+
+                <button type="button" (click)="updateProfile()" class="btn btn-success btn-md">
+                  Patch
+                </button>
+                <button type="button" class="btn btn-lg btn-outline-primary" (click)="open(content)">Launch</button>
+              </div>
+            </div>
+
+          </div>
+        </form>
+      </fieldset>
+    </div>
+  </div>
+</div>
+<p *ngIf="showValue">Form Value: {{ profileForm2.value | json }}</p>
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Profile update</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="form-group">
+        <label for="dateOfBirth">Date of birth</label>
+        <div class="input-group">
+          <input id="dateOfBirth" class="form-control" placeholder="yyyy-mm-dd" name="dp" ngbDatepicker
+            #dp="ngbDatepicker">
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary calendar" (click)="dp.toggle()" type="button"></button>
+          </div>
         </div>
       </div>
-    <button type="submit" [disabled]="!profileForm.valid">Submit</button>
     </form>
-    <p>
-        <button (click)="updateProfile()">Update Profile</button>
-      </p>
-
-      <p>
-        Form Status: {{ profileForm2.status }}
-      </p>
-      <p *ngIf="showValue">
-        Form Value: {{ profileForm2.value |json}}
-      </p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Save</button>
+  </div>
+</ng-template>
