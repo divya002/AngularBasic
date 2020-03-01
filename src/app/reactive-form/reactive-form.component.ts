@@ -2,10 +2,11 @@ import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormArray } from '@angular/forms';
 import { Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import {map, tap, debounceTime} from 'rxjs/operators';
-import {Observable} from 'rxjs';
+import { map, tap, debounceTime, distinctUntilChanged, switchMap, catchError } from 'rxjs/operators';
+import { Observable, of, iif } from 'rxjs';
 
 import { statesWithFlags } from '../../assets/state';
+import { WikipediaService } from '../services/wikipedia.service';
 @Component({
   selector: 'app-reactive-form',
   templateUrl: './reactive-form.component.html',
@@ -13,10 +14,14 @@ import { statesWithFlags } from '../../assets/state';
 })
 export class ReactiveFormComponent implements OnInit, AfterViewInit {
   public showValue: boolean;
+  public searching: boolean;
+  public searchFailed: boolean;
   @ViewChild('content', { static: true }) private modal;
 
-  constructor(private fb: FormBuilder, private modalService: NgbModal) {
+  constructor(private fb: FormBuilder, private modalService: NgbModal, private wikipediaService: WikipediaService) {
     this.showValue = false;
+    this.searching = false;
+    this.searchFailed = false;
   }
 
   profileForm2 = this.fb.group({
@@ -87,7 +92,29 @@ export class ReactiveFormComponent implements OnInit, AfterViewInit {
         : statesWithFlags.filter(v => v.name.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10))
     )
 
-  public formatter = (x: {name: string}) => x.name;
+  public formatter = (x: { name: string }) => x.name;
+
+  public wikipediaSearch = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      tap(() => this.searching = true),
+      switchMap((term) => iif(
+        () => (term.length <= 3),
+        of([])
+        , this.wikipediaService.searchWikipedia(term).pipe(
+          tap(() => {
+            this.searchFailed = false;
+            console.log(term);
+          }),
+          catchError(() => {
+            this.searchFailed = true;
+            return of([]);
+          })
+        ))),
+      tap(() => this.searching = false)
+    )
+
   public ngAfterViewInit() {
     setTimeout(() => {
       this.open(this.modal);
