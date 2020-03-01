@@ -8,11 +8,11 @@ import { Observable, of, iif } from 'rxjs';
 import { statesWithFlags } from '../../assets/state';
 import { WikipediaService } from '../services/wikipedia.service';
 @Component({
-  selector: 'app-reactive-form',
-  templateUrl: './reactive-form.component.html',
-  styleUrls: ['./reactive-form.component.css']
+  selector: 'app-register-form',
+  templateUrl: './register-form.component.html',
+  styleUrls: ['./register-form.component.css']
 })
-export class ReactiveFormComponent implements OnInit, AfterViewInit {
+export class RegisterFormComponent implements OnInit, AfterViewInit {
   public showValue: boolean;
   public searching: boolean;
   public searchFailed: boolean;

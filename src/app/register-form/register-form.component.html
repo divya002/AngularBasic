@@ -120,13 +120,13 @@
                   Submit
                 </button>
 
-                <button type="button" (click)="updateProfile()" class="btn btn-success btn-md">
+                <button type="button" (click)="updateProfile()" class="btn btn-outline-success btn-md">
                   Patch
                 </button>
                 <button type="button" class="btn btn-lg btn-outline-primary" (click)="open(content)">Launch</button>
+                <button type="button" class="btn btn-lg btn-outline-warning" [routerLink]="['/home']">Back</button>
               </div>
             </div>
-
           </div>
         </form>
       </fieldset>

@@ -17,7 +17,7 @@
     <div class="col-12">
       <hr>
       <div class="form-group d-flex justify-content-center">
-        <div class="form-check col-3">
+        <!-- <div class="form-check col-3">
             <input type="checkbox" class="form-check-input" id="pauseOnHover" [(ngModel)]="pauseOnHover">
             <label class="form-check-label" for="pauseOnHover">Pause on hover</label>
           </div>
@@ -28,12 +28,15 @@
           <div class="form-check col-4">
             <input type="checkbox" class="form-check-input" id="pauseOnIndicator" [(ngModel)]="pauseOnIndicator">
             <label class="form-check-label" for="pauseOnIndicator">Pause when clicking on navigation indicator</label>
-          </div>
+          </div> -->
           <div class="col-2">
             <button type="button" (click)="togglePaused()" class="btn btn btn-primary btn-lg">
                 {{paused ? 'Cycle' : 'Pause' }}
               </button>
           </div> 
+          <div class="col-2">
+            <button type="button" class="btn btn-lg btn-primary" [routerLink]="['/admin/register']" >Register</button>
+          </div>
         </div>
     </div>
   </div>
