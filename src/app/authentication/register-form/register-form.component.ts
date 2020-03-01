@@ -5,8 +5,8 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { map, tap, debounceTime, distinctUntilChanged, switchMap, catchError } from 'rxjs/operators';
 import { Observable, of, iif } from 'rxjs';
 
-import { statesWithFlags } from '../../assets/state';
-import { WikipediaService } from '../services/wikipedia.service';
+import { statesWithFlags } from '../../../assets/state';
+import { WikipediaService } from '../../services/wikipedia.service';
 @Component({
   selector: 'app-register-form',
   templateUrl: './register-form.component.html',
