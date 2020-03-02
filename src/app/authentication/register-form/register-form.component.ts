@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild , ElementRef} from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormArray } from '@angular/forms';
 import { Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -16,7 +16,8 @@ export class RegisterFormComponent implements OnInit, AfterViewInit {
   public showValue: boolean;
   public searching: boolean;
   public searchFailed: boolean;
-  @ViewChild('content', { static: true }) private modal;
+  @ViewChild('content', { static: true }) private modal: ElementRef;
+  @ViewChild('firstNam', { static: false }) private naam: ElementRef;
 
   constructor(private fb: FormBuilder, private modalService: NgbModal, private wikipediaService: WikipediaService) {
     this.showValue = false;
@@ -66,7 +67,7 @@ export class RegisterFormComponent implements OnInit, AfterViewInit {
   }
   public updateProfile() {
     this.profileForm2.patchValue({
-      firstName: 'Nancy',
+      firstName: 'Divy Prakash',
       address: {
         street: '123 Drew Street',
         state: {
@@ -118,7 +119,12 @@ export class RegisterFormComponent implements OnInit, AfterViewInit {
   public ngAfterViewInit() {
     setTimeout(() => {
       this.open(this.modal);
+      console.log(this.naam);
     }, 0);
+  }
+  public changeMethod(nam: HTMLInputElement) {
+    console.log(this.naam);
+    console.log(nam.value);
   }
   public ngOnInit(): void {
     this.profileForm2.get('PhysicallyActive').valueChanges.subscribe((data) => {

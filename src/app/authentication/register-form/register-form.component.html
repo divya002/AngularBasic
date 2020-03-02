@@ -12,7 +12,7 @@
               <label>
                 First Name:
               </label>
-              <input class="form-control"
+              <input class="form-control" #firstNam (change)="changeMethod(firstNam)"
                 [ngClass]="{'border border-danger':(profileForm2.get('firstName').invalid && (profileForm2.get('firstName').touched || profileForm2.get('firstName').dirty))}"
                 type="text" required formControlName="firstName" />
               <ng-container *ngIf="
