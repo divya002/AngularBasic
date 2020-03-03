@@ -1,8 +1,22 @@
-import { Component, OnInit, AfterViewInit, ViewChild , ElementRef} from '@angular/core';
+import {
+  Component,
+  OnInit,
+  AfterViewInit,
+  ViewChild,
+  Renderer2,
+  ElementRef
+} from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormArray } from '@angular/forms';
 import { Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { map, tap, debounceTime, distinctUntilChanged, switchMap, catchError } from 'rxjs/operators';
+import {
+  map,
+  tap,
+  debounceTime,
+  distinctUntilChanged,
+  switchMap,
+  catchError
+} from 'rxjs/operators';
 import { Observable, of, iif } from 'rxjs';
 
 import { statesWithFlags } from '../../../assets/state';
@@ -18,8 +32,15 @@ export class RegisterFormComponent implements OnInit, AfterViewInit {
   public searchFailed: boolean;
   @ViewChild('content', { static: true }) private modal: ElementRef;
   @ViewChild('firstNam', { static: false }) private naam: ElementRef;
+  @ViewChild('citizen', { static: false }) private citizen: ElementRef;
 
-  constructor(private fb: FormBuilder, private modalService: NgbModal, private wikipediaService: WikipediaService) {
+  constructor(
+    private fb: FormBuilder,
+    private modalService: NgbModal,
+    private wikipediaService: WikipediaService,
+    private renderer: Renderer2,
+    private el: ElementRef
+  ) {
     this.showValue = false;
     this.searching = false;
     this.searchFailed = false;
@@ -60,10 +81,12 @@ export class RegisterFormComponent implements OnInit, AfterViewInit {
   }
 
   public addAlias() {
-    this.aliases.push(this.fb.group({
-      name: [''],
-      key: ['']
-    }));
+    this.aliases.push(
+      this.fb.group({
+        name: [''],
+        key: ['']
+      })
+    );
   }
   public updateProfile() {
     this.profileForm2.patchValue({
@@ -79,19 +102,31 @@ export class RegisterFormComponent implements OnInit, AfterViewInit {
     });
   }
   public open(content) {
-    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' }).result.then((result) => {
-      console.log(`Closed with: ${result}`);
-    }, (reason) => {
-      console.log(`Dismissed ${(reason)}`);
-    });
+    this.modalService
+      .open(content, { ariaLabelledBy: 'modal-basic-title' })
+      .result.then(
+        result => {
+          console.log(`Closed with: ${result}`);
+        },
+        reason => {
+          console.log(`Dismissed ${reason}`);
+        }
+      );
   }
 
   public search = (text$: Observable<string>) =>
     text$.pipe(
       debounceTime(200),
-      map(term => term === '' ? []
-        : statesWithFlags.filter(v => v.name.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10))
-    )
+      map(term =>
+        term === ''
+          ? []
+          : statesWithFlags
+              .filter(
+                v => v.name.toLowerCase().indexOf(term.toLowerCase()) > -1
+              )
+              .slice(0, 10)
+      )
+    );
 
   public formatter = (x: { name: string }) => x.name;
 
@@ -99,22 +134,25 @@ export class RegisterFormComponent implements OnInit, AfterViewInit {
     text$.pipe(
       debounceTime(300),
       distinctUntilChanged(),
-      tap(() => this.searching = true),
-      switchMap((term) => iif(
-        () => (term.length <= 3),
-        of([])
-        , this.wikipediaService.searchWikipedia(term).pipe(
-          tap(() => {
-            this.searchFailed = false;
-            console.log(term);
-          }),
-          catchError(() => {
-            this.searchFailed = true;
-            return of([]);
-          })
-        ))),
-      tap(() => this.searching = false)
-    )
+      tap(() => (this.searching = true)),
+      switchMap(term =>
+        iif(
+          () => term.length <= 3,
+          of([]),
+          this.wikipediaService.searchWikipedia(term).pipe(
+            tap(() => {
+              this.searchFailed = false;
+              console.log(term);
+            }),
+            catchError(() => {
+              this.searchFailed = true;
+              return of([]);
+            })
+          )
+        )
+      ),
+      tap(() => (this.searching = false))
+    );
 
   public ngAfterViewInit() {
     setTimeout(() => {
@@ -125,9 +163,15 @@ export class RegisterFormComponent implements OnInit, AfterViewInit {
   public changeMethod(nam: HTMLInputElement) {
     console.log(this.naam);
     console.log(nam.value);
+    console.log('citizen...');
+    console.log(this.citizen);
+    const element = this.renderer.selectRootElement('.heading');
+    const text = this.renderer.createText('Namaste!!!');
+    this.renderer.appendChild(element, text);
+    // this.renderer.appendChild(this.citizen.nativeElement, text);
   }
   public ngOnInit(): void {
-    this.profileForm2.get('PhysicallyActive').valueChanges.subscribe((data) => {
+    this.profileForm2.get('PhysicallyActive').valueChanges.subscribe(data => {
       if (data) {
         console.log(`check ${data}`);
       } else {
