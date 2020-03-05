@@ -126,7 +126,7 @@ export class RegisterFormComponent implements OnInit, AfterViewInit {
               )
               .slice(0, 10)
       )
-    );
+    )
 
   public formatter = (x: { name: string }) => x.name;
 
@@ -152,7 +152,7 @@ export class RegisterFormComponent implements OnInit, AfterViewInit {
         )
       ),
       tap(() => (this.searching = false))
-    );
+    )
 
   public ngAfterViewInit() {
     setTimeout(() => {
