@@ -12,12 +12,13 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {
   map,
   tap,
+  take,
   debounceTime,
   distinctUntilChanged,
   switchMap,
   catchError
 } from 'rxjs/operators';
-import { Observable, of, iif } from 'rxjs';
+import { Observable, of, iif, interval, Subscription} from 'rxjs';
 
 import { statesWithFlags } from '../../../assets/state';
 import { WikipediaService } from '../../services/wikipedia.service';
@@ -30,6 +31,10 @@ export class RegisterFormComponent implements OnInit, AfterViewInit {
   public showValue: boolean;
   public searching: boolean;
   public searchFailed: boolean;
+  private numbers = interval(1000);
+  private numberSubscription1: Subscription;
+  private numberSubscription2: Subscription;
+  private allSubscription = new Subscription();
   @ViewChild('content', { static: true }) private modal: ElementRef;
   @ViewChild('firstNam', { static: false }) private naam: ElementRef;
   @ViewChild('citizen', { static: false }) private citizen: ElementRef;
@@ -100,6 +105,8 @@ export class RegisterFormComponent implements OnInit, AfterViewInit {
       },
       PhysicallyActive: true
     });
+    this.allSubscription.remove(this.numberSubscription1);
+    this.numberSubscription1.unsubscribe();
   }
   public open(content) {
     this.modalService
@@ -171,6 +178,15 @@ export class RegisterFormComponent implements OnInit, AfterViewInit {
     // this.renderer.appendChild(this.citizen.nativeElement, text);
   }
   public ngOnInit(): void {
+    this.numberSubscription1 = this.numbers.subscribe((x) => {
+      console.log(`subscription1 ${x}`);
+    });
+    this.allSubscription.add(this.numberSubscription1);
+
+    this.numberSubscription2 = this.numbers.subscribe((x) => {
+      console.log(`subscription2 ${x}`);
+    });
+    this.allSubscription.add(this.numberSubscription2);
     this.profileForm2.get('PhysicallyActive').valueChanges.subscribe(data => {
       if (data) {
         console.log(`check ${data}`);
